@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Show</title>
+</head>
+<body>
+<p style="position: absolute; left: 20%; font: italic bold 30px/40px Georgia; width: 200px; text-align: center;
+    height: 50px">User <a  th:utext="${user.name}"></a></p>
+<table border="1" ; style="position: absolute; left: 20%; top: 15%; font: italic bold 30px/40px Georgia">
+    <tr>
+        <th>id</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Username</th>
+    </tr>
+    <tr th:object="${user}" >
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.name}"></td>
+        <td th:text="${user.age}"></td>
+        <td th:text="${user.username}"></td>
+    </tr>
+</table>
+<a href="/logout"><input type="button" value="Logout" style="position: absolute; left: 1%; top: 10%; font: italic bold 30px/40px Georgia; width: 300px; text-align: center;
+    height: 50px"></a>
+</body>
+</html>
