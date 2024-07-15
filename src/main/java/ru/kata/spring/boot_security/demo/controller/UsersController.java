@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.controller;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,12 +27,14 @@ public class UsersController {
     private final UserDetailService userDetailService;
     private final RoleService roleService;
     private final UserValidator userValidator;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsersController(UserService userService, UserDetailService userDetailService, RoleService roleService, UserValidator userValidator) {
+    public UsersController(UserService userService, UserDetailService userDetailService, RoleService roleService, UserValidator userValidator, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.userDetailService = userDetailService;
         this.roleService = roleService;
         this.userValidator = userValidator;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
