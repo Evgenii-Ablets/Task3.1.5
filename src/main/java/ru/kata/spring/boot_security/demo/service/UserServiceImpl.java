@@ -18,7 +18,6 @@ import java.util.Set;
 @Service
 public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
-
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
 
@@ -38,31 +37,20 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     @Override
     public User getUserById(long id) throws EntityNotFoundException {
-        User user = userRepository.findById(id).orElse(null);
-        if(user == null) {
-            throw new EntityNotFoundException("User not found");
-        }
-        return user;
+        return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
-
     @Transactional
     @Override
     public void updateUser(User user) throws EntityNotFoundException {
-        User userFromDB = userRepository.findById(user.getId()).orElse(null);
-        if(userFromDB == null) {
-            throw new EntityNotFoundException("User not found");
-        }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        User userFromDB = userRepository.findById(user.getId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
+        userFromDB.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(userFromDB);
     }
 
     @Transactional
     @Override
     public void deleteUser(User user) throws EntityNotFoundException {
-        User userFromDB = userRepository.findById(user.getId()).orElse(null);
-        if(userFromDB == null) {
-            throw new EntityNotFoundException("User not found");
-        }
+        User userFromDB = userRepository.findById(user.getId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
         userRepository.delete(userFromDB);
     }
 
