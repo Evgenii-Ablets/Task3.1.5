@@ -1,4 +1,4 @@
-package ru.kata.spring.boot_security.demo.models;
+package ru.kata.spring.boot_security.demo.model;
 
 
 import org.springframework.security.core.GrantedAuthority;
@@ -19,7 +19,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -41,16 +41,14 @@ public class User implements UserDetails {
     @Column(name = "username", unique = true)
     private String username;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<Role> roles;
+    private Set<Role> roles;
 
 
-
-
-    public User(String name, int age, String username, String password, List<Role> roles) {
+    public User(String name, int age, String username, String password, Set<Role> roles) {
         this.name = name;
         this.age = age;
         this.username = username;
@@ -85,11 +83,41 @@ public class User implements UserDetails {
         this.id = id;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                ", id=" + id +
+                '}';
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void addRole(Role role) {
+        roles.add(role);
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
@@ -117,34 +145,5 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                ", id=" + id +
-                '}';
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
-    }
-
-    public List<Role> getRoles() {
-        return roles;
-    }
-
-    public void addRole(Role role) {
-        roles.add(role);
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.kata.spring.boot_security.demo.models.User;
+import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserDetailService;
 import ru.kata.spring.boot_security.demo.service.UserService;
@@ -16,8 +16,7 @@ import ru.kata.spring.boot_security.demo.util.UserValidator;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.List;
-
+import java.util.Set;
 
 
 @Controller
@@ -27,14 +26,13 @@ public class UsersController {
     private final UserDetailService userDetailService;
     private final RoleService roleService;
     private final UserValidator userValidator;
-    private final PasswordEncoder passwordEncoder;
 
-    public UsersController(UserService userService, UserDetailService userDetailService, RoleService roleService, UserValidator userValidator, PasswordEncoder passwordEncoder) {
+
+    public UsersController(UserService userService, UserDetailService userDetailService, RoleService roleService, UserValidator userValidator) {
         this.userService = userService;
         this.userDetailService = userDetailService;
         this.roleService = roleService;
         this.userValidator = userValidator;
-        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -65,9 +63,10 @@ public class UsersController {
 
     @PostMapping("/admin/new")
     public String createNewUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult,
-                                @RequestParam("selectedRoles") List<Long> selectedRoles) {
+                                @RequestParam("selectedRoles") Set<Long> selectedRoles, Model model) {
         userValidator.validate(user, bindingResult);
         if (bindingResult.hasErrors()) {
+            model.addAttribute("allRoles", roleService.findAll());
             return "new";
         }
         userService.save(user, selectedRoles);
@@ -82,8 +81,8 @@ public class UsersController {
     }
 
     @PostMapping("/admin/{id}")
-    public String update(@ModelAttribute("user") User user, BindingResult bindingResult,
-                         @RequestParam("selectedRoles") List<Long> selectedRoles) {
+    public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult,
+                         @RequestParam("selectedRoles")Set<Long> selectedRoles) {
         if (bindingResult.hasErrors()) {
             return "edit";
         }
@@ -91,7 +90,7 @@ public class UsersController {
         return "redirect:/admin/users";
     }
 
-    @GetMapping("/admin/delete")
+    @PostMapping("/admin/delete")
     public String delete(@RequestParam("id") long id) {
         userService.deleteUser(userService.getUserById(id));
         return "redirect:/admin/users";

@@ -3,10 +3,11 @@ package ru.kata.spring.boot_security.demo.service;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import ru.kata.spring.boot_security.demo.models.Role;
-import ru.kata.spring.boot_security.demo.models.User;
+import ru.kata.spring.boot_security.demo.model.Role;
+import ru.kata.spring.boot_security.demo.model.User;
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class UsersAdding {
@@ -26,7 +27,7 @@ public class UsersAdding {
         user1.setUsername("user");
         user1.setAge(20);
         user1.setPassword("user");
-        user1.setRoles(List.of(new Role("ROLE_USER")));
+        user1.setRoles(Set.of(new Role("ROLE_USER")));
         try {
             userDetailService.loadUserByUsername(user1.getUsername());
         } catch (UsernameNotFoundException ignored) {
@@ -37,7 +38,7 @@ public class UsersAdding {
         user.setUsername("admin");
         user.setAge(20);
         user.setPassword("admin");
-        user.setRoles(List.of(new Role("ROLE_ADMIN")));
+        user.setRoles(Set.of(new Role("ROLE_ADMIN")));
         try {
             userDetailService.loadUserByUsername(user.getUsername());
         } catch (UsernameNotFoundException ignored) {
