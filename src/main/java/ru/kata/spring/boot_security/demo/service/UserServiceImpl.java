@@ -49,8 +49,8 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void deleteUser(User user) throws EntityNotFoundException {
-        User userFromDB = userRepository.findById(user.getId()).orElseThrow(() -> new EntityNotFoundException("User not found"));
+    public void deleteUser(long id) throws EntityNotFoundException {
+        User userFromDB = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
         userRepository.delete(userFromDB);
     }
 
@@ -63,11 +63,10 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public void save(User user, Set<Long> selectedRoles) {
-        User savedUser = userRepository.save(user);
-        savedUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         Set<Role> roles = new HashSet<>(roleRepository.findAllById(selectedRoles));
-        savedUser.setRoles(roles);
-        userRepository.save(savedUser);
+        user.setRoles(roles);
+        userRepository.save(user);
     }
 
 }

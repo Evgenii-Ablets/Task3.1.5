@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.controller;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -9,33 +10,29 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
-import ru.kata.spring.boot_security.demo.service.UserDetailService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 import ru.kata.spring.boot_security.demo.util.UserValidator;
 
 import javax.validation.Valid;
-import java.security.Principal;
 import java.util.Set;
 
 @Controller
 public class AdminController {
     private final UserService userService;
-    private final UserDetailService userDetailService;
     private final RoleService roleService;
     private final UserValidator userValidator;
 
 
-    public AdminController(UserService userService, UserDetailService userDetailService, RoleService roleService, UserValidator userValidator) {
+    public AdminController(UserService userService, RoleService roleService, UserValidator userValidator) {
         this.userService = userService;
-        this.userDetailService = userDetailService;
         this.roleService = roleService;
         this.userValidator = userValidator;
     }
 
     @GetMapping("/admin")
-    public String admin(Principal principal, Model model) {
+    public String admin(@AuthenticationPrincipal User user, Model model) {
         model.addAttribute("allUsers", userService.getUsers());
-        model.addAttribute("authUser", userDetailService.loadUserByUsername(principal.getName()));
+        model.addAttribute("authUser", user);
         model.addAttribute("newUser", new User());
         model.addAttribute("roles", roleService.findAll());
         model.addAttribute("activeTable", "usersTable");
@@ -66,7 +63,7 @@ public class AdminController {
 
     @PostMapping("/admin/delete")
     public String delete(@RequestParam("id") long id) {
-        userService.deleteUser(userService.getUserById(id));
+        userService.deleteUser(id);
         return "redirect:/admin";
     }
 }

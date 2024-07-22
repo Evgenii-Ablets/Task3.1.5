@@ -17,7 +17,7 @@ public class RoleServiceImpl implements RoleService {
     public RoleServiceImpl(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
-    @Transactional
+
     @Override
     public Set<Role> findAll() {
         return new HashSet<>(roleRepository.findAll());
