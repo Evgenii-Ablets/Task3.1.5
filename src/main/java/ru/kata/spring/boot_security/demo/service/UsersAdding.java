@@ -5,16 +5,18 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
+
 import javax.annotation.PostConstruct;
-import java.util.List;
 import java.util.Set;
 
 @Component
 public class UsersAdding {
+    private final RoleService roleSerivce;
     private final UserService userService;
     private final UserDetailService userDetailService;
 
-    public UsersAdding(UserService userService, UserDetailService userDetailService) {
+    public UsersAdding(RoleService roleSerivce, UserService userService, UserDetailService userDetailService) {
+        this.roleSerivce = roleSerivce;
         this.userService = userService;
         this.userDetailService = userDetailService;
     }
@@ -22,6 +24,10 @@ public class UsersAdding {
     @PostConstruct
     @Transactional
     public void addUser() {
+        Role roleUser = new Role(1, "ROLE_USER");
+        Role roleAdmin = new Role(2, "ROLE_ADMIN");
+        roleSerivce.addRole(roleUser);
+        roleSerivce.addRole(roleAdmin);
         User user1 = new User();
         user1.setName("Oleg");
         user1.setUsername("user");
